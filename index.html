@@ -4,9 +4,15 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>BYCORE</title>
-    <link rel="stylesheet" href="/css/global.css" />
-    <link rel="stylesheet" href="/css/titlebar.css" />
-    <link rel="stylesheet" href="/css/sidebar.css" />
+    <link rel="stylesheet" href="/src/css/global.css" />
+    <link rel="stylesheet" href="/src/css/titlebar.css" />
+    <link rel="stylesheet" href="/src/css/sidebar.css" />
+    <link rel="stylesheet" href="/src/css/dashboard.css" />
+    <link rel="stylesheet" href="/src/css/notes.css" />
+    <link rel="stylesheet" href="/src/css/tasks.css" />
+    <link rel="stylesheet" href="/src/css/calendar.css" />
+    <link rel="stylesheet" href="/src/css/system.css" />
+    <link rel="stylesheet" href="/src/css/settings.css" />
   </head>
   <body>
 
@@ -23,16 +29,13 @@
     <!-- App Layout -->
     <div class="app-layout">
 
-      <!-- Sidebear -->
+      <!-- Sidebar -->
       <aside class="sidebar">
         <nav class="sidebar-nav">
           <a class="nav-item active" data-module="dashboard">🏠 Home</a>
           <a class="nav-item" data-module="notes">📝 Notizen</a>
           <a class="nav-item" data-module="tasks">✅ Tasks</a>
           <a class="nav-item" data-module="calendar">📅 Kalender</a>
-          <a class="nav-item" data-module="apps">🚀 Apps</a>
-          <a class="nav-item" data-module="files">📁 Dateien</a>
-          <a class="nav-item" data-module="music">🎵 Musik</a>
           <a class="nav-item" data-module="system">📊 System</a>
         </nav>
         <div class="sidebar-bottom">
@@ -48,6 +51,6 @@
 
     </div>
 
-    <script type="module" src="/main.ts"></script>
+    <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

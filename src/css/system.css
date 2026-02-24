@@ -1,0 +1,167 @@
+/* ============================================================
+   BYCORE — System Monitor (Redesigned)
+   ============================================================ */
+
+.system-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  padding: 24px;
+  overflow: hidden;
+}
+
+.system-header { margin-bottom: 20px; flex-shrink: 0; }
+.system-header h1 { font-size: 22px; font-weight: 700; color: var(--text-primary); }
+
+.system-content { flex: 1; overflow-y: auto; }
+.system-content::-webkit-scrollbar { width: 4px; }
+.system-content::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+/* ---- Hero ---- */
+.sys-hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(135deg, var(--accent), #6366f1);
+  border-radius: var(--radius-lg);
+  padding: 28px 32px;
+  margin-bottom: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.sys-hero::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  right: -20%;
+  width: 300px;
+  height: 300px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 50%;
+}
+
+.sys-hero-left { position: relative; z-index: 1; }
+
+.sys-hero-time {
+  font-size: 42px;
+  font-weight: 800;
+  color: #fff;
+  font-family: var(--font-mono);
+  letter-spacing: 2px;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.sys-hero-date { font-size: 14px; color: rgba(255,255,255,0.8); font-weight: 500; }
+
+.sys-hero-right { display: flex; gap: 28px; position: relative; z-index: 1; }
+
+.sys-hero-stat { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.sys-hero-number { font-size: 20px; font-weight: 700; color: #fff; font-family: var(--font-mono); }
+.sys-hero-label { font-size: 10px; color: rgba(255,255,255,0.65); text-transform: uppercase; letter-spacing: 0.8px; }
+
+/* ---- Stats Pills ---- */
+.sys-stats-bar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.sys-stats-bar::-webkit-scrollbar { height: 3px; }
+.sys-stats-bar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+.sys-stat-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.sys-stat-pill:hover { border-color: var(--accent); transform: translateY(-1px); }
+.sys-pill-icon { font-size: 14px; }
+.sys-pill-num { font-size: 16px; font-weight: 700; color: var(--accent); font-family: var(--font-mono); }
+.sys-pill-label { font-size: 11px; color: var(--text-secondary); }
+
+/* ---- Grid ---- */
+.sys-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.sys-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.sys-card-accent { border-color: rgba(74,158,255,0.3); }
+.sys-card-accent::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent), #6366f1);
+}
+
+.sys-card-icon { font-size: 24px; margin-bottom: 6px; }
+
+.sys-card h3 {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ---- Rows ---- */
+.sys-rows { display: flex; flex-direction: column; gap: 10px; }
+.sys-row { display: flex; align-items: center; justify-content: space-between; }
+.sys-label { font-size: 12px; color: var(--text-secondary); }
+.sys-value { font-size: 12px; font-weight: 600; color: var(--text-primary); font-family: var(--font-mono); }
+.sys-status.online { color: var(--success); }
+.sys-status.offline { color: var(--danger); }
+
+/* ---- Storage Ring ---- */
+.sys-storage-visual { display: flex; align-items: center; gap: 20px; }
+
+.sys-storage-ring {
+  width: 100px;
+  height: 100px;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.sys-storage-ring svg { width: 100%; height: 100%; }
+.sys-ring-fill { transition: stroke-dasharray 0.6s ease; }
+
+.sys-ring-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sys-ring-percent {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--accent);
+  font-family: var(--font-mono);
+}
+
+.sys-storage-details { display: flex; flex-direction: column; gap: 8px; flex: 1; }

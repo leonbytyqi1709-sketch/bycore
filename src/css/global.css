@@ -46,7 +46,7 @@
 html, body {
     height: 100%;
     overflow: hidden;
-    font-family: var(--font-boddy);
+    font-family: var(--font-body);
     background: var(--bg-content);
     color: var(--text-primary);
 }

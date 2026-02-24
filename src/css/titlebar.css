@@ -1,0 +1,39 @@
+.titlebar {
+    height: 40px;
+    background: var(--bg-sidebar);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.titlebar-dots {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.dot-red {background: #ff5f57;}
+.dot-yellow {background: #febc2e;}
+.dot-green {background: #28c840;}
+
+.dot:hover {filter: brightness(1.2);}
+
+.titlebar-title {
+    flex: 1;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    letter-spacing: 2px;
+}
