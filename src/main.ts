@@ -962,24 +962,21 @@ function renderSystemMonitor() {
   const container = document.getElementById("systemContent");
   if (!container) return;
 
-  const storage = getStorageUsage();
   const stats = getAppStats();
   const theme = localStorage.getItem("bycore-theme") || "dark";
   const userName = localStorage.getItem("bycore-username") || "Leon";
-  const nav = navigator as any;
-  const storagePercent = Math.min((storage.bytes / (5 * 1024 * 1024)) * 100, 100).toFixed(1);
   const totalItems = stats.totalNotes + stats.totalTasks + stats.totalEvents;
 
   container.innerHTML = `
     <div class="sys-hero">
       <div class="sys-hero-left">
         <div class="sys-hero-time" id="sysHeroTime">${new Date().toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit", second: "2-digit" })}</div>
-        <div class="sys-hero-date" id="sysHeroDate">${new Date().toLocaleDateString("de-DE", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}</div>
+        <div class="sys-hero-date">${new Date().toLocaleDateString("de-DE", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}</div>
       </div>
       <div class="sys-hero-right">
         <div class="sys-hero-stat"><span class="sys-hero-number">${totalItems}</span><span class="sys-hero-label">Einträge gesamt</span></div>
-        <div class="sys-hero-stat"><span class="sys-hero-number">${storage.used}</span><span class="sys-hero-label">Speicher</span></div>
-        <div class="sys-hero-stat"><span class="sys-hero-number sys-status ${navigator.onLine ? "online" : "offline"}">${navigator.onLine ? "Online" : "Offline"}</span><span class="sys-hero-label">Status</span></div>
+        <div class="sys-hero-stat"><span class="sys-hero-number" id="sysCpuHero">–%</span><span class="sys-hero-label">CPU</span></div>
+        <div class="sys-hero-stat"><span class="sys-hero-number" id="sysNetHero">–</span><span class="sys-hero-label">Netzwerk</span></div>
       </div>
     </div>
 
@@ -998,30 +995,26 @@ function renderSystemMonitor() {
         <div class="sys-card-icon">🖥️</div>
         <h3>Hardware</h3>
         <div class="sys-rows">
-          <div class="sys-row"><span class="sys-label">Browser</span><span class="sys-value">${getBrowserName()}</span></div>
-          <div class="sys-row"><span class="sys-label">Plattform</span><span class="sys-value">${navigator.platform || "Unbekannt"}</span></div>
+          <div class="sys-row"><span class="sys-label">CPU Auslastung</span><span class="sys-value" id="sysCpu">Laden...</span></div>
+          <div class="sys-row"><span class="sys-label">RAM genutzt</span><span class="sys-value" id="sysRam">Laden...</span></div>
+          <div class="sys-row"><span class="sys-label">CPU Kerne</span><span class="sys-value">${(navigator as any).hardwareConcurrency || "?"}</span></div>
           <div class="sys-row"><span class="sys-label">Bildschirm</span><span class="sys-value">${screen.width} × ${screen.height}</span></div>
-          <div class="sys-row"><span class="sys-label">Fenster</span><span class="sys-value">${window.innerWidth} × ${window.innerHeight}</span></div>
-          <div class="sys-row"><span class="sys-label">DPI Scale</span><span class="sys-value">${window.devicePixelRatio}x</span></div>
-          ${nav.hardwareConcurrency ? `<div class="sys-row"><span class="sys-label">CPU Kerne</span><span class="sys-value">${nav.hardwareConcurrency}</span></div>` : ""}
-          ${nav.deviceMemory ? `<div class="sys-row"><span class="sys-label">RAM</span><span class="sys-value">~${nav.deviceMemory} GB</span></div>` : ""}
         </div>
       </div>
       <div class="sys-card">
         <div class="sys-card-icon">💾</div>
-        <h3>Speicher</h3>
+        <h3>Festplatte</h3>
         <div class="sys-storage-visual">
           <div class="sys-storage-ring">
             <svg viewBox="0 0 100 100">
               <circle cx="50" cy="50" r="42" fill="none" stroke="var(--border)" stroke-width="8"/>
-              <circle cx="50" cy="50" r="42" fill="none" stroke="var(--accent)" stroke-width="8" stroke-dasharray="${parseFloat(storagePercent) * 2.64} 264" stroke-linecap="round" transform="rotate(-90 50 50)" class="sys-ring-fill"/>
+              <circle cx="50" cy="50" r="42" fill="none" stroke="var(--accent)" stroke-width="8" stroke-dasharray="0 264" stroke-linecap="round" transform="rotate(-90 50 50)" class="sys-ring-fill" id="sysDiskRing"/>
             </svg>
-            <div class="sys-ring-text"><span class="sys-ring-percent">${storagePercent}%</span></div>
+            <div class="sys-ring-text"><span class="sys-ring-percent" id="sysDiskPct">–%</span></div>
           </div>
           <div class="sys-storage-details">
-            <div class="sys-row"><span class="sys-label">Belegt</span><span class="sys-value">${storage.used}</span></div>
-            <div class="sys-row"><span class="sys-label">Keys</span><span class="sys-value">${storage.keys}</span></div>
-            <div class="sys-row"><span class="sys-label">Maximum</span><span class="sys-value">~5 MB</span></div>
+            <div class="sys-row"><span class="sys-label">Belegt</span><span class="sys-value" id="sysDiskUsed">Laden...</span></div>
+            <div class="sys-row"><span class="sys-label">Gesamt</span><span class="sys-value" id="sysDiskTotal">Laden...</span></div>
           </div>
         </div>
       </div>
@@ -1031,15 +1024,16 @@ function renderSystemMonitor() {
         <div class="sys-rows">
           <div class="sys-row"><span class="sys-label">Benutzer</span><span class="sys-value">${userName}</span></div>
           <div class="sys-row"><span class="sys-label">Theme</span><span class="sys-value">${theme === "dark" ? "🌙 Dark" : "☀️ Light"}</span></div>
-          <div class="sys-row"><span class="sys-label">Sprache</span><span class="sys-value">${navigator.language}</span></div>
+          <div class="sys-row"><span class="sys-label">Netzwerk</span><span class="sys-value" id="sysNetSpeed">Laden...</span></div>
           <div class="sys-row"><span class="sys-label">Version</span><span class="sys-value">BYCORE v1.0.0</span></div>
-          <div class="sys-row"><span class="sys-label">Engine</span><span class="sys-value">Tauri + TypeScript</span></div>
+          <div class="sys-row"><span class="sys-label">Engine</span><span class="sys-value">Electron + TypeScript</span></div>
           <div class="sys-row"><span class="sys-label">Uptime</span><span class="sys-value" id="sysUptime">0s</span></div>
         </div>
       </div>
     </div>
   `;
 
+  // Uhr & Uptime
   clearInterval(systemInterval);
   const startTime = Date.now();
   systemInterval = setInterval(() => {
@@ -1053,15 +1047,38 @@ function renderSystemMonitor() {
       uptimeEl.textContent = hr > 0 ? `${hr}h ${min % 60}m` : min > 0 ? `${min}m ${sec % 60}s` : `${sec}s`;
     }
   }, 1000);
-}
 
-function getBrowserName(): string {
-  const ua = navigator.userAgent;
-  if (ua.includes("Chrome") && !ua.includes("Edg")) return "Chrome " + (ua.match(/Chrome\/(\d+)/) || [])[1];
-  if (ua.includes("Edg")) return "Edge " + (ua.match(/Edg\/(\d+)/) || [])[1];
-  if (ua.includes("Firefox")) return "Firefox " + (ua.match(/Firefox\/(\d+)/) || [])[1];
-  if (ua.includes("Safari") && !ua.includes("Chrome")) return "Safari";
-  return "Unbekannt";
+  // Echte System-Daten via Electron IPC
+  const api = (window as any).electronAPI;
+  if (api && api.onSystemStats) {
+    api.onSystemStats((data: any) => {
+      const cpuEl = document.getElementById("sysCpu");
+      const cpuHeroEl = document.getElementById("sysCpuHero");
+      const ramEl = document.getElementById("sysRam");
+      const diskUsedEl = document.getElementById("sysDiskUsed");
+      const diskTotalEl = document.getElementById("sysDiskTotal");
+      const diskPctEl = document.getElementById("sysDiskPct");
+      const diskRingEl = document.getElementById("sysDiskRing");
+      const netHeroEl = document.getElementById("sysNetHero");
+      const netSpeedEl = document.getElementById("sysNetSpeed");
+
+      if (cpuEl) cpuEl.textContent = data.cpu + "%";
+      if (cpuHeroEl) cpuHeroEl.textContent = data.cpu + "%";
+      if (ramEl) ramEl.textContent = data.ram.used + " / " + data.ram.total + " GB";
+
+      const pct = Math.min((parseFloat(data.disk.used) / parseFloat(data.disk.total)) * 100, 100);
+      if (diskUsedEl) diskUsedEl.textContent = data.disk.used + " GB";
+      if (diskTotalEl) diskTotalEl.textContent = data.disk.total + " GB";
+      if (diskPctEl) diskPctEl.textContent = pct.toFixed(1) + "%";
+      if (diskRingEl) diskRingEl.setAttribute("stroke-dasharray", `${(pct * 2.64).toFixed(1)} 264`);
+
+      const netText = data.network.online ? "🟢 Online" : "🔴 Offline";
+      if (netHeroEl) netHeroEl.textContent = netText;
+      if (netSpeedEl) netSpeedEl.textContent = data.network.speed;
+    });
+  } else {
+    console.warn("electronAPI nicht verfügbar – läuft die App als Electron?");
+  }
 }
 
 function setupSystemMonitor() {
