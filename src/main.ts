@@ -557,8 +557,8 @@ function renderTasks() {
             <span class="tl-col tl-actions">Aktionen</span>
           </div>
           ${filtered
-            .map(
-              (t) => `
+          .map(
+            (t) => `
             <div class="task-list-item" data-task-id="${t.id}">
               <div class="tl-col tl-check"><div class="task-checkbox ${t.done ? "checked" : ""}" data-toggle-id="${t.id}"></div></div>
               <span class="tl-col tl-prio">${getPriorityLabel(t.priority)}</span>
@@ -580,8 +580,8 @@ function renderTasks() {
               </div>
             </div>
           `
-            )
-            .join("")}
+          )
+          .join("")}
         </div>
       `;
     }
@@ -710,7 +710,7 @@ let selectedDate: string | null = null;
 let editingEventId: string | null = null;
 
 function getMonthName(month: number): string {
-  return ["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"][month];
+  return ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"][month];
 }
 
 function toDateStr(y: number, m: number, d: number): string {
@@ -760,7 +760,7 @@ function renderCalendar() {
   if (monthLabel) monthLabel.textContent = `${getMonthName(calendarMonth)} ${calendarYear}`;
 
   const days = getCalendarDays(calendarYear, calendarMonth);
-  const weekdays = ["Mo","Di","Mi","Do","Fr","Sa","So"];
+  const weekdays = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"];
 
   container.innerHTML = `
     <div class="calendar-weekdays">
@@ -768,11 +768,11 @@ function renderCalendar() {
     </div>
     <div class="calendar-days">
       ${days.map((d) => {
-        const dayEvents = events.filter((e) => e.date === d.date);
-        const isToday = d.date === today;
-        const isSelected = d.date === selectedDate;
-        const cls = ["calendar-day", !d.currentMonth ? "other-month" : "", isToday ? "today" : "", isSelected ? "selected" : ""].filter(Boolean).join(" ");
-        return `
+    const dayEvents = events.filter((e) => e.date === d.date);
+    const isToday = d.date === today;
+    const isSelected = d.date === selectedDate;
+    const cls = ["calendar-day", !d.currentMonth ? "other-month" : "", isToday ? "today" : "", isSelected ? "selected" : ""].filter(Boolean).join(" ");
+    return `
           <div class="${cls}" data-date="${d.date}">
             <span class="day-number">${d.day}</span>
             <div class="day-events">
@@ -780,7 +780,7 @@ function renderCalendar() {
               ${dayEvents.length > 3 ? `<div class="day-event-more">+${dayEvents.length - 3} mehr</div>` : ""}
             </div>
           </div>`;
-      }).join("")}
+  }).join("")}
     </div>
   `;
 
@@ -825,10 +825,9 @@ function renderCalendar() {
   const upcomingEl = document.getElementById("calendarUpcoming");
   if (upcomingEl) {
     const upcoming = events.filter((e) => e.date >= today).sort((a, b) => a.date.localeCompare(b.date) || a.startTime.localeCompare(b.startTime)).slice(0, 5);
-    upcomingEl.innerHTML = `<div class="upcoming-title">Nächste Termine</div>${
-      upcoming.length === 0 ? '<p style="font-size:12px;color:var(--text-secondary)">Keine anstehenden Termine</p>'
-      : upcoming.map((e) => `<div class="upcoming-item"><span class="upcoming-item-dot" style="background:${getColorVal(e.color)}"></span><span class="upcoming-item-date">${new Date(e.date+"T00:00:00").toLocaleDateString("de-DE",{day:"2-digit",month:"2-digit"})}</span><span class="upcoming-item-title">${e.title}</span></div>`).join("")
-    }`;
+    upcomingEl.innerHTML = `<div class="upcoming-title">Nächste Termine</div>${upcoming.length === 0 ? '<p style="font-size:12px;color:var(--text-secondary)">Keine anstehenden Termine</p>'
+        : upcoming.map((e) => `<div class="upcoming-item"><span class="upcoming-item-dot" style="background:${getColorVal(e.color)}"></span><span class="upcoming-item-date">${new Date(e.date + "T00:00:00").toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit" })}</span><span class="upcoming-item-title">${e.title}</span></div>`).join("")
+      }`;
   }
 }
 
@@ -879,7 +878,7 @@ function showEventModal(editId?: string) {
       <div class="event-modal-field">
         <label>Farbe</label>
         <div class="color-picker-row" id="colorPicker">
-          ${["blue","green","red","orange","purple"].map((c) => `<div class="color-option color-${c} ${defColor === c ? "selected" : ""}" data-color="${c}"></div>`).join("")}
+          ${["blue", "green", "red", "orange", "purple"].map((c) => `<div class="color-option color-${c} ${defColor === c ? "selected" : ""}" data-color="${c}"></div>`).join("")}
         </div>
       </div>
       <div class="event-modal-actions">
@@ -957,26 +956,71 @@ function getAppStats() {
 }
 
 let systemInterval: any = null;
+let lastSystemStats: any = null;
+
+if ((window as any).electronAPI?.onSystemStats) {
+  (window as any).electronAPI.onSystemStats((stats: any) => {
+    lastSystemStats = stats;
+    updateSystemMonitorUI();
+  });
+}
+
+function updateSystemMonitorUI() {
+  if (!lastSystemStats) return;
+
+  const statusEl = document.querySelector(".sys-status");
+  if (statusEl) {
+    statusEl.textContent = lastSystemStats.network.online ? "Online" : "Offline";
+    statusEl.className = `sys-hero-number sys-status ${lastSystemStats.network.online ? "online" : "offline"}`;
+  }
+
+  const cpuEl = document.getElementById("sysCpuValue");
+  if (cpuEl) cpuEl.textContent = lastSystemStats.cpu + "%";
+
+  const ramEl = document.getElementById("sysRamValue");
+  if (ramEl) ramEl.textContent = `${lastSystemStats.ram.used} / ${lastSystemStats.ram.total} GB`;
+
+  const diskUsedEl = document.getElementById("sysDiskUsed");
+  if (diskUsedEl) diskUsedEl.textContent = lastSystemStats.disk.used + " GB";
+
+  const diskTotalEl = document.getElementById("sysDiskTotal");
+  if (diskTotalEl) diskTotalEl.textContent = lastSystemStats.disk.total + " GB";
+
+  const netSpeedEl = document.getElementById("sysNetSpeed");
+  if (netSpeedEl) netSpeedEl.textContent = lastSystemStats.network.speed;
+
+  const ringFill = document.querySelector(".sys-ring-fill") as any;
+  const ringPercent = document.querySelector(".sys-ring-percent");
+  if (ringFill && ringPercent && lastSystemStats.disk.total > 0) {
+    const percent = ((lastSystemStats.disk.used / lastSystemStats.disk.total) * 100);
+    ringPercent.textContent = percent.toFixed(1) + "%";
+    ringFill.setAttribute("stroke-dasharray", `${percent * 2.64} 264`);
+  }
+}
+
 
 function renderSystemMonitor() {
   const container = document.getElementById("systemContent");
   if (!container) return;
 
+  const storage = getStorageUsage();
   const stats = getAppStats();
   const theme = localStorage.getItem("bycore-theme") || "dark";
   const userName = localStorage.getItem("bycore-username") || "Leon";
+  const nav = navigator as any;
+  const storagePercent = Math.min((storage.bytes / (5 * 1024 * 1024)) * 100, 100).toFixed(1);
   const totalItems = stats.totalNotes + stats.totalTasks + stats.totalEvents;
 
   container.innerHTML = `
     <div class="sys-hero">
       <div class="sys-hero-left">
         <div class="sys-hero-time" id="sysHeroTime">${new Date().toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit", second: "2-digit" })}</div>
-        <div class="sys-hero-date">${new Date().toLocaleDateString("de-DE", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}</div>
+        <div class="sys-hero-date" id="sysHeroDate">${new Date().toLocaleDateString("de-DE", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}</div>
       </div>
       <div class="sys-hero-right">
         <div class="sys-hero-stat"><span class="sys-hero-number">${totalItems}</span><span class="sys-hero-label">Einträge gesamt</span></div>
-        <div class="sys-hero-stat"><span class="sys-hero-number" id="sysCpuHero">–%</span><span class="sys-hero-label">CPU</span></div>
-        <div class="sys-hero-stat"><span class="sys-hero-number" id="sysNetHero">–</span><span class="sys-hero-label">Netzwerk</span></div>
+        <div class="sys-hero-stat"><span class="sys-hero-number">${storage.used}</span><span class="sys-hero-label">Bycore Speicher</span></div>
+        <div class="sys-hero-stat"><span class="sys-hero-number sys-status ${lastSystemStats?.network.online ?? navigator.onLine ? "online" : "offline"}">${lastSystemStats?.network.online ?? navigator.onLine ? "Online" : "Offline"}</span><span class="sys-hero-label">Status</span></div>
       </div>
     </div>
 
@@ -993,28 +1037,30 @@ function renderSystemMonitor() {
     <div class="sys-grid">
       <div class="sys-card sys-card-accent">
         <div class="sys-card-icon">🖥️</div>
-        <h3>Hardware</h3>
+        <h3>System Hardware</h3>
         <div class="sys-rows">
-          <div class="sys-row"><span class="sys-label">CPU Auslastung</span><span class="sys-value" id="sysCpu">Laden...</span></div>
-          <div class="sys-row"><span class="sys-label">RAM genutzt</span><span class="sys-value" id="sysRam">Laden...</span></div>
-          <div class="sys-row"><span class="sys-label">CPU Kerne</span><span class="sys-value">${(navigator as any).hardwareConcurrency || "?"}</span></div>
-          <div class="sys-row"><span class="sys-label">Bildschirm</span><span class="sys-value">${screen.width} × ${screen.height}</span></div>
+          <div class="sys-row"><span class="sys-label">CPU Auslastung</span><span class="sys-value" id="sysCpuValue">${lastSystemStats?.cpu ?? "..."}%</span></div>
+          <div class="sys-row"><span class="sys-label">RAM Nutzung</span><span class="sys-value" id="sysRamValue">${lastSystemStats ? `${lastSystemStats.ram.used} / ${lastSystemStats.ram.total} GB` : "..."}</span></div>
+          <div class="sys-row"><span class="sys-label">Plattform</span><span class="sys-value">${navigator.platform || "Unbekannt"}</span></div>
+          <div class="sys-row"><span class="sys-label">DPI Scale</span><span class="sys-value">${window.devicePixelRatio}x</span></div>
+          <div class="sys-row"><span class="sys-label">Netzwerk</span><span class="sys-value" id="sysNetSpeed">${lastSystemStats?.network.speed ?? "..."}</span></div>
         </div>
       </div>
       <div class="sys-card">
         <div class="sys-card-icon">💾</div>
-        <h3>Festplatte</h3>
+        <h3>Laufwerk (Disk)</h3>
         <div class="sys-storage-visual">
           <div class="sys-storage-ring">
             <svg viewBox="0 0 100 100">
               <circle cx="50" cy="50" r="42" fill="none" stroke="var(--border)" stroke-width="8"/>
-              <circle cx="50" cy="50" r="42" fill="none" stroke="var(--accent)" stroke-width="8" stroke-dasharray="0 264" stroke-linecap="round" transform="rotate(-90 50 50)" class="sys-ring-fill" id="sysDiskRing"/>
+              <circle cx="50" cy="50" r="42" fill="none" stroke="var(--accent)" stroke-width="8" stroke-dasharray="${lastSystemStats ? (lastSystemStats.disk.used / lastSystemStats.disk.total) * 100 * 2.64 : 0} 264" stroke-linecap="round" transform="rotate(-90 50 50)" class="sys-ring-fill"/>
             </svg>
-            <div class="sys-ring-text"><span class="sys-ring-percent" id="sysDiskPct">–%</span></div>
+            <div class="sys-ring-text"><span class="sys-ring-percent">${lastSystemStats ? ((lastSystemStats.disk.used / lastSystemStats.disk.total) * 100).toFixed(1) : "0"}%</span></div>
           </div>
           <div class="sys-storage-details">
-            <div class="sys-row"><span class="sys-label">Belegt</span><span class="sys-value" id="sysDiskUsed">Laden...</span></div>
-            <div class="sys-row"><span class="sys-label">Gesamt</span><span class="sys-value" id="sysDiskTotal">Laden...</span></div>
+            <div class="sys-row"><span class="sys-label">Belegt</span><span class="sys-value" id="sysDiskUsed">${lastSystemStats?.disk.used ?? "..."} GB</span></div>
+            <div class="sys-row"><span class="sys-label">Gesamt</span><span class="sys-value" id="sysDiskTotal">${lastSystemStats?.disk.total ?? "..."} GB</span></div>
+            <div class="sys-row"><span class="sys-label">App Cache</span><span class="sys-value">${storage.used}</span></div>
           </div>
         </div>
       </div>
@@ -1024,7 +1070,6 @@ function renderSystemMonitor() {
         <div class="sys-rows">
           <div class="sys-row"><span class="sys-label">Benutzer</span><span class="sys-value">${userName}</span></div>
           <div class="sys-row"><span class="sys-label">Theme</span><span class="sys-value">${theme === "dark" ? "🌙 Dark" : "☀️ Light"}</span></div>
-          <div class="sys-row"><span class="sys-label">Netzwerk</span><span class="sys-value" id="sysNetSpeed">Laden...</span></div>
           <div class="sys-row"><span class="sys-label">Version</span><span class="sys-value">BYCORE v1.0.0</span></div>
           <div class="sys-row"><span class="sys-label">Engine</span><span class="sys-value">Electron + TypeScript</span></div>
           <div class="sys-row"><span class="sys-label">Uptime</span><span class="sys-value" id="sysUptime">0s</span></div>
@@ -1033,7 +1078,7 @@ function renderSystemMonitor() {
     </div>
   `;
 
-  // Uhr & Uptime
+
   clearInterval(systemInterval);
   const startTime = Date.now();
   systemInterval = setInterval(() => {
@@ -1047,38 +1092,15 @@ function renderSystemMonitor() {
       uptimeEl.textContent = hr > 0 ? `${hr}h ${min % 60}m` : min > 0 ? `${min}m ${sec % 60}s` : `${sec}s`;
     }
   }, 1000);
+}
 
-  // Echte System-Daten via Electron IPC
-  const api = (window as any).electronAPI;
-  if (api && api.onSystemStats) {
-    api.onSystemStats((data: any) => {
-      const cpuEl = document.getElementById("sysCpu");
-      const cpuHeroEl = document.getElementById("sysCpuHero");
-      const ramEl = document.getElementById("sysRam");
-      const diskUsedEl = document.getElementById("sysDiskUsed");
-      const diskTotalEl = document.getElementById("sysDiskTotal");
-      const diskPctEl = document.getElementById("sysDiskPct");
-      const diskRingEl = document.getElementById("sysDiskRing");
-      const netHeroEl = document.getElementById("sysNetHero");
-      const netSpeedEl = document.getElementById("sysNetSpeed");
-
-      if (cpuEl) cpuEl.textContent = data.cpu + "%";
-      if (cpuHeroEl) cpuHeroEl.textContent = data.cpu + "%";
-      if (ramEl) ramEl.textContent = data.ram.used + " / " + data.ram.total + " GB";
-
-      const pct = Math.min((parseFloat(data.disk.used) / parseFloat(data.disk.total)) * 100, 100);
-      if (diskUsedEl) diskUsedEl.textContent = data.disk.used + " GB";
-      if (diskTotalEl) diskTotalEl.textContent = data.disk.total + " GB";
-      if (diskPctEl) diskPctEl.textContent = pct.toFixed(1) + "%";
-      if (diskRingEl) diskRingEl.setAttribute("stroke-dasharray", `${(pct * 2.64).toFixed(1)} 264`);
-
-      const netText = data.network.online ? "🟢 Online" : "🔴 Offline";
-      if (netHeroEl) netHeroEl.textContent = netText;
-      if (netSpeedEl) netSpeedEl.textContent = data.network.speed;
-    });
-  } else {
-    console.warn("electronAPI nicht verfügbar – läuft die App als Electron?");
-  }
+function getBrowserName(): string {
+  const ua = navigator.userAgent;
+  if (ua.includes("Chrome") && !ua.includes("Edg")) return "Chrome " + (ua.match(/Chrome\/(\d+)/) || [])[1];
+  if (ua.includes("Edg")) return "Edge " + (ua.match(/Edg\/(\d+)/) || [])[1];
+  if (ua.includes("Firefox")) return "Firefox " + (ua.match(/Firefox\/(\d+)/) || [])[1];
+  if (ua.includes("Safari") && !ua.includes("Chrome")) return "Safari";
+  return "Unbekannt";
 }
 
 function setupSystemMonitor() {
@@ -1280,42 +1302,99 @@ function getDashboardHTML(): string {
   ];
   const quote = quotes[Math.floor(Math.random() * quotes.length)];
 
+  const totalTasks = tasks.length;
+  const completionPct = totalTasks > 0 ? Math.round((totalDone / totalTasks) * 100) : 0;
+  const strokeDash = (completionPct / 100) * 251.2;
+  const events = JSON.parse(localStorage.getItem("bycore-events") || "[]");
+  const todayEvents = events.filter((e: any) => e.date === new Date().toISOString().split("T")[0]).length;
+  const pinnedNotes = getNotes().filter((n) => n.pinned).length;
+
   return `
     <div class="dashboard">
-      <div class="dashboard-greeting">
-        <h1>${greeting}, ${userName} 👋</h1>
-        <p class="date" id="date-display"></p>
-        <p class="clock" id="clock"></p>
+      <!-- HERO BANNER -->
+      <div class="dash-hero">
+        <div class="dash-hero-particles">
+          <span class="particle"></span><span class="particle"></span><span class="particle"></span>
+          <span class="particle"></span><span class="particle"></span><span class="particle"></span>
+        </div>
+        <div class="dash-hero-left">
+          <p class="dash-hero-greeting">${greeting},</p>
+          <h1 class="dash-hero-name">${userName} 👋</h1>
+          <p class="dash-hero-date" id="date-display"></p>
+        </div>
+        <div class="dash-hero-center">
+          <p class="clock" id="clock"></p>
+        </div>
+        <div class="dash-hero-right">
+          <div class="dash-hero-ring">
+            <svg viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="6"/>
+              <circle cx="50" cy="50" r="40" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round"
+                stroke-dasharray="${strokeDash} 251.2" transform="rotate(-90 50 50)" class="dash-ring-fill"/>
+            </svg>
+            <div class="dash-ring-text">
+              <span class="dash-ring-num">${completionPct}%</span>
+            </div>
+          </div>
+          <span class="dash-ring-label">Produktivität</span>
+        </div>
       </div>
+
+      <!-- QUICK STATS BAR -->
+      <div class="dash-stats-bar">
+        <div class="dash-stat-chip">
+          <span class="dash-chip-icon">📋</span>
+          <span class="dash-chip-num">${imp + norm + opt}</span>
+          <span class="dash-chip-label">Offene Tasks</span>
+        </div>
+        <div class="dash-stat-chip">
+          <span class="dash-chip-icon">✅</span>
+          <span class="dash-chip-num">${totalDone}</span>
+          <span class="dash-chip-label">Erledigt</span>
+        </div>
+        <div class="dash-stat-chip">
+          <span class="dash-chip-icon">📝</span>
+          <span class="dash-chip-num">${totalNotes}</span>
+          <span class="dash-chip-label">Notizen</span>
+        </div>
+        <div class="dash-stat-chip">
+          <span class="dash-chip-icon">📌</span>
+          <span class="dash-chip-num">${pinnedNotes}</span>
+          <span class="dash-chip-label">Gepinnt</span>
+        </div>
+        <div class="dash-stat-chip">
+          <span class="dash-chip-icon">📅</span>
+          <span class="dash-chip-num">${todayEvents}</span>
+          <span class="dash-chip-label">Heute</span>
+        </div>
+      </div>
+
+      <!-- MAIN GRID -->
       <div class="dashboard-grid">
-        <div class="dash-card">
+        <div class="dash-card dash-card-tasks">
           <div class="dash-card-header"><h3>Tasks</h3><span class="card-icon">✅</span></div>
           <div class="task-stats">
             <div class="task-stat-row important"><span class="label">🔴 Wichtig</span><span class="count" id="dashImp">${imp}</span></div>
             <div class="task-stat-row normal"><span class="label">🟡 Normal</span><span class="count" id="dashNorm">${norm}</span></div>
             <div class="task-stat-row optional"><span class="label">⚪ Optional</span><span class="count" id="dashOpt">${opt}</span></div>
           </div>
-        </div>
-        <div class="dash-card">
-          <div class="dash-card-header"><h3>Übersicht</h3><span class="card-icon">📊</span></div>
-          <div class="overview-stats">
-            <div class="overview-stat"><span class="overview-number">${totalDone}</span><span class="overview-label">Erledigt</span></div>
-            <div class="overview-stat"><span class="overview-number">${totalNotes}</span><span class="overview-label">Notizen</span></div>
-            <div class="overview-stat"><span class="overview-number">${imp + norm + opt}</span><span class="overview-label">Offen</span></div>
+          <div class="dash-task-progress">
+            <div class="dash-progress-bar"><div class="dash-progress-fill" style="width:${completionPct}%"></div></div>
+            <span class="dash-progress-text">${totalDone}/${totalTasks} erledigt</span>
           </div>
         </div>
-        <div class="dash-card">
+        <div class="dash-card dash-card-events">
           <div class="dash-card-header"><h3>Nächste Termine</h3><span class="card-icon">📅</span></div>
           <div class="event-list">
             ${getUpcomingDashEvents()}
           </div>
         </div>
-        <div class="dash-card">
+        <div class="dash-card dash-card-actions">
           <div class="dash-card-header"><h3>Quick Actions</h3><span class="card-icon">⚡</span></div>
           <div class="quick-actions">
-            <button class="quick-action-btn" id="qaNewNote">📝 Neue Notiz</button>
-            <button class="quick-action-btn" id="qaNewTask">✅ Neuer Task</button>
-            <button class="quick-action-btn" id="qaSystem">📊 System</button>
+            <button class="quick-action-btn" id="qaNewNote"><span class="qa-icon">📝</span> Neue Notiz</button>
+            <button class="quick-action-btn" id="qaNewTask"><span class="qa-icon">✅</span> Neuer Task</button>
+            <button class="quick-action-btn" id="qaSystem"><span class="qa-icon">📊</span> System Monitor</button>
           </div>
         </div>
         <div class="dash-card quote-card">
@@ -1402,6 +1481,114 @@ const moduleTemplates: Record<string, string> = {
 };
 
 // ============================================================
+// ANIMATIONS & 3D EFFECTS
+// ============================================================
+
+let scrollObserver: IntersectionObserver | null = null;
+
+function setupScrollReveal() {
+  if (scrollObserver) scrollObserver.disconnect();
+
+  scrollObserver = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("visible");
+        }
+      });
+    },
+    { threshold: 0.05, rootMargin: "0px 0px -20px 0px" }
+  );
+
+  document.querySelectorAll(
+    ".scroll-reveal, .scroll-reveal-left, .scroll-reveal-right, .scroll-reveal-scale, .scroll-reveal-flip"
+  ).forEach((el) => scrollObserver!.observe(el));
+}
+
+function setup3DTilt() {
+  document.querySelectorAll<HTMLElement>(
+    ".dash-card, .sys-card, .settings-card, .sys-stat-pill"
+  ).forEach((card) => {
+    let raf: number;
+
+    card.addEventListener("mouseenter", () => {
+      card.style.transition = "transform 0.1s ease-out, box-shadow 0.15s ease-out";
+    });
+
+    card.addEventListener("mousemove", (e: MouseEvent) => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const rect = card.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width;
+        const y = (e.clientY - rect.top) / rect.height;
+        const tiltX = (y - 0.5) * -10;
+        const tiltY = (x - 0.5) * 10;
+        card.style.transform = `perspective(800px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) translateY(-6px) scale(1.02)`;
+        card.style.boxShadow = `0 ${(20 + tiltX).toFixed(1)}px ${(40 + Math.abs(tiltX) * 2).toFixed(1)}px rgba(0,0,0,0.4), 0 0 ${(30 + Math.abs(tiltY) * 2).toFixed(1)}px rgba(232,123,53,${(0.04 + Math.abs(tiltY) * 0.005).toFixed(3)}), inset 0 1px 0 rgba(255,255,255,0.06)`;
+      });
+    });
+
+    card.addEventListener("mouseleave", () => {
+      cancelAnimationFrame(raf);
+      card.style.transition = "transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.5s ease";
+      card.style.transform = "";
+      card.style.boxShadow = "";
+    });
+  });
+}
+
+function applyModuleAnimations() {
+  // Dashboard
+  document.querySelectorAll(".dash-card").forEach((el, i) => {
+    el.classList.add("scroll-reveal");
+    if (i < 6) el.classList.add(`delay-${i + 1}`);
+  });
+  const dashGreeting = document.querySelector(".dashboard-greeting");
+  if (dashGreeting) dashGreeting.classList.add("scroll-reveal-left");
+
+  // System Monitor
+  const sysHero = document.querySelector(".sys-hero");
+  if (sysHero) sysHero.classList.add("scroll-reveal-scale");
+  document.querySelectorAll(".sys-stat-pill").forEach((el, i) => {
+    el.classList.add("scroll-reveal-scale");
+    if (i < 8) el.classList.add(`delay-${i + 1}`);
+  });
+  document.querySelectorAll(".sys-card").forEach((el, i) => {
+    el.classList.add("scroll-reveal-flip");
+    if (i < 6) el.classList.add(`delay-${i + 1}`);
+  });
+
+  // Settings
+  document.querySelectorAll(".settings-card").forEach((el, i) => {
+    el.classList.add("scroll-reveal");
+    if (i < 6) el.classList.add(`delay-${i + 1}`);
+  });
+
+  // Kanban
+  document.querySelectorAll(".kanban-column").forEach((el, i) => {
+    el.classList.add("scroll-reveal");
+    if (i < 3) el.classList.add(`delay-${i + 1}`);
+  });
+
+  // Calendar sidebar events
+  document.querySelectorAll(".sidebar-event-item").forEach((el, i) => {
+    el.classList.add("scroll-reveal");
+    if (i < 6) el.classList.add(`delay-${i + 1}`);
+  });
+
+  // Notes list items
+  document.querySelectorAll(".note-item").forEach((el, i) => {
+    el.classList.add("scroll-reveal");
+    if (i < 6) el.classList.add(`delay-${i + 1}`);
+  });
+
+  requestAnimationFrame(() => {
+    setupScrollReveal();
+    setup3DTilt();
+  });
+}
+
+// ============================================================
 // SIDEBAR NAVIGATION
 // ============================================================
 const navItems = document.querySelectorAll(".nav-item");
@@ -1409,6 +1596,7 @@ const contentArea = document.getElementById("contentArea");
 
 function loadModule(moduleName: string) {
   if (activeNoteId) saveCurrentNote();
+  clearInterval(systemInterval);
 
   navItems.forEach((item) => item.classList.remove("active"));
   document.querySelector(`[data-module="${moduleName}"]`)?.classList.add("active");
@@ -1449,6 +1637,7 @@ function loadModule(moduleName: string) {
     setupSettings();
   }
 
+  applyModuleAnimations();
   localStorage.setItem("bycore-active-module", moduleName);
 }
 

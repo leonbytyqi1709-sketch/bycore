@@ -24,6 +24,9 @@
         <span class="dot dot-green"></span>
       </div>
       <div class="titlebar-title">BYCORE</div>
+      <div class="titlebar-actions">
+        <button class="titlebar-icon" id="themeToggle">🌙</button>
+      </div>
     </div>
 
     <!-- App Layout -->
@@ -31,16 +34,27 @@
 
       <!-- Sidebar -->
       <aside class="sidebar">
+        <div class="sidebar-logo">
+          <div class="sidebar-logo-icon">B</div>
+          <span class="sidebar-logo-text">BYCORE</span>
+        </div>
+
         <nav class="sidebar-nav">
-          <a class="nav-item active" data-module="dashboard">🏠 Home</a>
+          <div class="sidebar-section-label">HOME</div>
+          <a class="nav-item active" data-module="dashboard">🏠 Dashboard</a>
+
+          <div class="sidebar-section-label">PRODUKTIVITÄT</div>
           <a class="nav-item" data-module="notes">📝 Notizen</a>
           <a class="nav-item" data-module="tasks">✅ Tasks</a>
           <a class="nav-item" data-module="calendar">📅 Kalender</a>
-          <a class="nav-item" data-module="system">📊 System</a>
         </nav>
+
         <div class="sidebar-bottom">
           <a class="nav-item" data-module="settings">⚙️ Settings</a>
-          <button class="theme-toggle" id="themeToggle">🌙</button>
+          <div class="sidebar-version">
+            <strong>BYCORE v1.0</strong>
+            <span>Dein digitales Hauptquartier</span>
+          </div>
         </div>
       </aside>
 
