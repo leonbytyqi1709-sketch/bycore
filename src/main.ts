@@ -1,3 +1,16 @@
+// CSS Imports - werden von Vite im Build korrekt verarbeitet
+import './css/global.css';
+import './css/titlebar.css';
+import './css/sidebar.css';
+import './css/dashboard.css';
+import './css/notes.css';
+import './css/tasks.css';
+import './css/calendar.css';
+import './css/system.css';
+import './css/settings.css';
+import './css/accent.css';
+import './css/filemanager.css';
+
 // ============================================================
 // BYCORE Desktop App — main.ts
 // Dashboard · Notizen · Task Manager · Kalender · File Manager · Settings
