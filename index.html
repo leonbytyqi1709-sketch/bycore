@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BYCORE</title>
+    <link rel="stylesheet" href="/src/css/global.css" />
+    <link rel="stylesheet" href="/src/css/titlebar.css" />
+    <link rel="stylesheet" href="/src/css/sidebar.css" />
+    <link rel="stylesheet" href="/src/css/dashboard.css" />
+    <link rel="stylesheet" href="/src/css/notes.css" />
+    <link rel="stylesheet" href="/src/css/tasks.css" />
+    <link rel="stylesheet" href="/src/css/calendar.css" />
+    <link rel="stylesheet" href="/src/css/system.css" />
+    <link rel="stylesheet" href="/src/css/settings.css" />
+    <link rel="stylesheet" href="/src/css/accent.css" />
+    <link rel="stylesheet" href="/src/css/filemanager.css" />
+  </head>
+  <body>
+
+    <!-- Titlebar -->
+    <div class="titlebar" data-tauri-drag-region>
+      <div class="titlebar-dots">
+        <span class="dot dot-red"></span>
+        <span class="dot dot-yellow"></span>
+        <span class="dot dot-green"></span>
+      </div>
+      <div class="titlebar-title">BYCORE</div>
+      <div class="titlebar-actions">
+        <button class="titlebar-icon" id="themeToggle">🌙</button>
+      </div>
+    </div>
+
+    <!-- App Layout -->
+    <div class="app-layout">
+
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="sidebar-logo">
+          <div class="sidebar-logo-icon">B</div>
+          <span class="sidebar-logo-text">BYCORE</span>
+        </div>
+
+        <nav class="sidebar-nav">
+          <div class="sidebar-section-label">HOME</div>
+          <a class="nav-item active" data-module="dashboard">🏠 Dashboard</a>
+
+          <div class="sidebar-section-label">PRODUKTIVITÄT</div>
+          <a class="nav-item" data-module="notes">📝 Notizen</a>
+          <a class="nav-item" data-module="tasks">✅ Tasks</a>
+          <a class="nav-item" data-module="calendar">📅 Kalender</a>
+          <a class="nav-item" data-module="filemanager">📁 File Manager</a>
+        </nav>
+
+        <div class="sidebar-bottom">
+          <!-- User Block -->
+          <div class="sidebar-user-block">
+            <div class="sidebar-user-avatar" id="sidebarAvatar">?</div>
+            <div class="sidebar-user-info">
+              <span class="sidebar-user-email" id="sidebarEmail">Laden...</span>
+              <span class="sidebar-user-role">Angemeldet</span>
+            </div>
+            <button class="sidebar-logout-btn" id="sidebarLogout" title="Abmelden">🚪</button>
+          </div>
+          <a class="nav-item" data-module="settings">⚙️ Settings</a>
+          <div class="sidebar-version">
+            <strong>BYCORE v1.0</strong>
+            <span>Dein digitales Hauptquartier</span>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Content Area -->
+      <main class="content-area" id="contentArea">
+        <p>Lade...</p>
+      </main>
+
+    </div>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

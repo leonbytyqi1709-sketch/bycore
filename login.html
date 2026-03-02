@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BYCORE – Login</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #0D0D0D;
+      color: #fff;
+      font-family: 'Segoe UI', sans-serif;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    /* Glow background */
+    body::before {
+      content: '';
+      position: fixed;
+      top: -200px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(255,107,0,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .card {
+      background: #161616;
+      border: 1px solid #2a2a2a;
+      border-radius: 16px;
+      padding: 48px 40px;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 0 40px rgba(255,107,0,0.06);
+      position: relative;
+    }
+
+    .logo {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .logo h1 {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: 4px;
+      color: #FF6B00;
+      text-shadow: 0 0 20px rgba(255,107,0,0.5);
+    }
+
+    .logo p {
+      color: #555;
+      font-size: 13px;
+      margin-top: 6px;
+      letter-spacing: 1px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-size: 12px;
+      color: #888;
+      margin-bottom: 8px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    input {
+      width: 100%;
+      background: #1e1e1e;
+      border: 1px solid #2a2a2a;
+      border-radius: 8px;
+      padding: 12px 16px;
+      color: #fff;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    input:focus {
+      border-color: #FF6B00;
+      box-shadow: 0 0 0 3px rgba(255,107,0,0.1);
+    }
+
+    input::placeholder { color: #444; }
+
+    .btn-primary {
+      width: 100%;
+      background: #FF6B00;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 13px;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: background 0.2s, box-shadow 0.2s;
+    }
+
+    .btn-primary:hover {
+      background: #e05e00;
+      box-shadow: 0 0 20px rgba(255,107,0,0.3);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .error-msg {
+      background: rgba(255, 60, 60, 0.1);
+      border: 1px solid rgba(255, 60, 60, 0.3);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 13px;
+      color: #ff6b6b;
+      margin-bottom: 16px;
+      display: none;
+    }
+
+    .divider {
+      text-align: center;
+      color: #444;
+      font-size: 12px;
+      margin: 20px 0;
+    }
+
+    .link-register {
+      text-align: center;
+      font-size: 13px;
+      color: #555;
+    }
+
+    .link-register a {
+      color: #FF6B00;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .link-register a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">
+      <h1>BYCORE</h1>
+      <p>Dein digitales Hauptquartier</p>
+    </div>
+
+    <div class="error-msg" id="errorMsg"></div>
+
+    <div class="form-group">
+      <label>E-Mail</label>
+      <input type="email" id="email" placeholder="deine@email.com" />
+    </div>
+
+    <div class="form-group">
+      <label>Passwort</label>
+      <input type="password" id="password" placeholder="••••••••" />
+    </div>
+
+    <button class="btn-primary" id="loginBtn" onclick="handleLogin()">EINLOGGEN</button>
+
+    <div class="divider">──────── oder ────────</div>
+
+    <div class="link-register">
+      Noch kein Account? <a href="register.html">Registrieren</a>
+    </div>
+  </div>
+
+  <script type="module">
+    import { login } from './src/lib/auth.ts';
+    import { onAuthChange } from './src/lib/auth.ts';
+
+    // Wenn bereits eingeloggt → direkt weiter
+    onAuthChange((session) => {
+      if (session) window.location.href = 'index.html';
+    });
+
+    window.handleLogin = async function () {
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const btn = document.getElementById('loginBtn');
+      const errorMsg = document.getElementById('errorMsg');
+
+      errorMsg.style.display = 'none';
+      btn.disabled = true;
+      btn.textContent = 'Wird geladen...';
+
+      try {
+        await login(email, password);
+        window.location.href = 'index.html';
+      } catch (err) {
+        errorMsg.textContent = err.message || 'Login fehlgeschlagen.';
+        errorMsg.style.display = 'block';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'EINLOGGEN';
+      }
+    };
+
+    // Enter-Taste
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') window.handleLogin();
+    });
+  </script>
+</body>
+</html>
