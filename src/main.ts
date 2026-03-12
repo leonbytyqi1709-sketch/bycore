@@ -179,7 +179,9 @@ async function getUserId(): Promise<string> {
   return data.session!.user.id;
 }
 
-supabase.auth.onAuthStateChange((_event, session) => {
+supabase.auth.onAuthStateChange((event, session) => {
+  // INITIAL_SESSION kann kurz null sein beim Start – nicht sofort weiterleiten
+  if (event === 'INITIAL_SESSION') return;
   if (!session) window.location.href = 'login.html';
 });
 
