@@ -14,7 +14,6 @@ import './css/wordprocessor.css';
 import './css/spreadsheet.css';
 import './css/pomodoro.css';
 import './css/calculator.css';
-import './css/minibrowser.css';
 import './css/presentations.css';
 
 // ============================================================
@@ -26,12 +25,8 @@ import './css/presentations.css';
 import { getCurrentWindow } from '@tauri-apps/api/window';
 import { createClient } from '@supabase/supabase-js';
 import { renderFileManager, initFileManager } from './filemanager';
-import { renderWordProcessor, initWordProcessor, cleanupWordProcessor } from './wordprocessor';
-import { renderSpreadsheet, initSpreadsheet, cleanupSpreadsheet } from './spreadsheet';
-import { renderPomodoro, initPomodoro, cleanupPomodoro } from './pomodoro';
-import { renderCalculator, initCalculator, cleanupCalculator } from './calculator';
-import { renderMiniBrowser, initMiniBrowser, cleanupMiniBrowser } from './minibrowser';
-import { renderPresentations, initPresentations, cleanupPresentations } from './presentations';
+// Module imports are lazy-loaded via dynamic import() for performance
+// Only filemanager is statically imported (used as sync fallback)
 
 const supabase = createClient(
   'https://rnltzcoexyyusvzgavjw.supabase.co',
@@ -129,7 +124,6 @@ async function initNotifications() {
     scheduleHourlyCheck();
   } catch (_) {
     // Läuft im Browser-Dev-Modus – Tauri nicht verfügbar
-    console.info('[BYCORE] Notifications nicht verfügbar (Browser-Modus)');
   }
 }
 
@@ -1425,23 +1419,52 @@ function applyModuleAnimations() {
 const navItems = document.querySelectorAll(".nav-item");
 const contentArea = document.getElementById("contentArea");
 
-async function loadModule(moduleName: string) {
-  if (activeNoteId) saveCurrentNote();
-  cleanupWordProcessor();
-  cleanupSpreadsheet();
-  cleanupPomodoro();
-  cleanupCalculator();
-  cleanupMiniBrowser();
-  cleanupPresentations();
+// Lazy-loaded module cache
+const lazyModules: Record<string, any> = {};
+
+async function lazyLoad(name: string) {
+  if (lazyModules[name]) return lazyModules[name];
+  switch (name) {
+    case 'wordprocessor': lazyModules[name] = await import('./wordprocessor'); break;
+    case 'spreadsheet':   lazyModules[name] = await import('./spreadsheet'); break;
+    case 'pomodoro':      lazyModules[name] = await import('./pomodoro'); break;
+    case 'calculator':    lazyModules[name] = await import('./calculator'); break;
+    case 'presentations': lazyModules[name] = await import('./presentations'); break;
+    case 'filemanager':   lazyModules[name] = { renderFileManager, initFileManager }; break;
+  }
+  return lazyModules[name];
+}
+
+function cleanupAllModules() {
+  if (lazyModules['wordprocessor']?.cleanupWordProcessor) lazyModules['wordprocessor'].cleanupWordProcessor();
+  if (lazyModules['spreadsheet']?.cleanupSpreadsheet) lazyModules['spreadsheet'].cleanupSpreadsheet();
+  if (lazyModules['pomodoro']?.cleanupPomodoro) lazyModules['pomodoro'].cleanupPomodoro();
+  if (lazyModules['calculator']?.cleanupCalculator) lazyModules['calculator'].cleanupCalculator();
+  if (lazyModules['presentations']?.cleanupPresentations) lazyModules['presentations'].cleanupPresentations();
   clearInterval(systemInterval);
+}
+
+let isTransitioning = false;
+
+async function loadModule(moduleName: string) {
+  if (isTransitioning) return;
+  if (activeNoteId) saveCurrentNote();
+  cleanupAllModules();
   navItems.forEach((item) => item.classList.remove("active"));
   document.querySelector(`[data-module="${moduleName}"]`)?.classList.add("active");
   if (!contentArea) return;
 
+  // ── Smooth fade-out ──
+  isTransitioning = true;
+  contentArea.classList.add('module-exit');
+  await new Promise(r => setTimeout(r, 150));
+
+  // ── Load data ──
   if (moduleName === "notes") await loadNotes();
   if (moduleName === "tasks") await loadTasks();
   if (moduleName === "calendar") await loadEvents();
 
+  // ── Render content ──
   if (moduleName === "dashboard") {
     await Promise.all([loadNotes(), loadTasks(), loadEvents()]);
     contentArea.innerHTML = getDashboardHTML();
@@ -1457,13 +1480,24 @@ async function loadModule(moduleName: string) {
   if (moduleName === "calendar") { setupCalendarEvents(); renderCalendar(); }
   if (moduleName === "system") setupSystemMonitor();
   if (moduleName === "settings") setupSettings();
-  if (moduleName === "filemanager") { contentArea.innerHTML = renderFileManager(); initFileManager(); }
-  if (moduleName === "wordprocessor") { contentArea.innerHTML = renderWordProcessor(); initWordProcessor(); }
-  if (moduleName === "spreadsheet") { contentArea.innerHTML = renderSpreadsheet(); initSpreadsheet(); }
-  if (moduleName === "pomodoro") { contentArea.innerHTML = renderPomodoro(); initPomodoro(); }
-  if (moduleName === "calculator") { contentArea.innerHTML = renderCalculator(); initCalculator(); }
-  if (moduleName === "browser") { contentArea.innerHTML = renderMiniBrowser(); initMiniBrowser(); }
-  if (moduleName === "presentations") { contentArea.innerHTML = renderPresentations(); initPresentations(); }
+
+  // ── Lazy-loaded modules ──
+  if (moduleName === "filemanager") { const m = await lazyLoad('filemanager'); contentArea.innerHTML = m.renderFileManager(); m.initFileManager(); }
+  if (moduleName === "wordprocessor") { const m = await lazyLoad('wordprocessor'); contentArea.innerHTML = m.renderWordProcessor(); m.initWordProcessor(); }
+  if (moduleName === "spreadsheet") { const m = await lazyLoad('spreadsheet'); contentArea.innerHTML = m.renderSpreadsheet(); m.initSpreadsheet(); }
+  if (moduleName === "pomodoro") { const m = await lazyLoad('pomodoro'); contentArea.innerHTML = m.renderPomodoro(); m.initPomodoro(); }
+  if (moduleName === "calculator") { const m = await lazyLoad('calculator'); contentArea.innerHTML = m.renderCalculator(); m.initCalculator(); }
+  if (moduleName === "presentations") { const m = await lazyLoad('presentations'); contentArea.innerHTML = m.renderPresentations(); m.initPresentations(); }
+
+  // ── Smooth fade-in ──
+  contentArea.classList.remove('module-exit');
+  contentArea.classList.add('module-enter');
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      contentArea.classList.remove('module-enter');
+      isTransitioning = false;
+    });
+  });
 
   applyModuleAnimations();
   localStorage.setItem("bycore-active-module", moduleName);

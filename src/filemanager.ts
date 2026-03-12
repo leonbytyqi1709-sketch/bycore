@@ -185,8 +185,7 @@ async function addFavorite(): Promise<void> {
 
     showToast(`"${name}" wurde hinzugefügt`, '📌');
   } catch (err) {
-    // User cancelled dialog – no error needed
-    console.log('Dialog cancelled', err);
+    // User cancelled dialog – no action needed
   }
 }
 

@@ -83,6 +83,7 @@ html, body {
   color: var(--text-primary);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
 }
 
 /* === AMBIENT BACKGROUND GLOWS === */
@@ -97,6 +98,8 @@ body::before {
   pointer-events: none;
   z-index: 0;
   animation: ambientDrift1 14s ease-in-out infinite alternate;
+  will-change: transform, opacity;
+  contain: strict;
 }
 
 body::after {
@@ -110,6 +113,8 @@ body::after {
   pointer-events: none;
   z-index: 0;
   animation: ambientDrift2 18s ease-in-out 2s infinite alternate-reverse;
+  will-change: transform, opacity;
+  contain: strict;
 }
 
 @keyframes ambientDrift1 {
@@ -143,6 +148,9 @@ body::after {
 ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 10px; }
 ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.15); }
 
+/* Smooth scroll everywhere */
+* { scroll-behavior: smooth; }
+
 /* Selection */
 ::selection { background: var(--accent-glow); color: var(--accent); }
 
@@ -153,6 +161,34 @@ body::after {
   overflow-x: hidden;
   background: transparent;
   position: relative;
+  scroll-behavior: smooth;
+  will-change: opacity, transform;
+}
+
+/* ── Smooth Module Transitions ───────────────────────── */
+
+.content-area.module-exit {
+  opacity: 0;
+  transform: translateY(6px) scale(0.995);
+  transition: opacity 0.15s ease-out, transform 0.15s ease-out;
+  pointer-events: none;
+}
+
+.content-area.module-enter {
+  opacity: 0;
+  transform: translateY(8px) scale(0.995);
+  animation: moduleEnter 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes moduleEnter {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.995);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 /* === SHARED BUTTON STYLES === */
@@ -173,8 +209,8 @@ body::after {
 
 .btn-primary:hover, .btn-new-note:hover, .btn-new-task:hover, .btn-new-event:hover, .btn-save-task:hover {
   background: linear-gradient(135deg, var(--accent-hover), var(--accent));
-  box-shadow: 0 8px 28px var(--accent-glow), 0 0 40px var(--accent-glow), inset 0 1px 0 rgba(255,255,255,0.2);
-  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 6px 20px var(--accent-glow), inset 0 1px 0 rgba(255,255,255,0.15);
+  transform: translateY(-2px);
 }
 
 .btn-danger, .btn-delete, .settings-btn-danger {
@@ -243,11 +279,10 @@ body::after {
   background: var(--bg-card-hover);
   border-color: var(--glass-border-strong);
   box-shadow:
-    0 30px 60px rgba(0,0,0,0.5),
-    0 0 50px var(--accent-glow),
-    inset 0 1px 0 rgba(255,255,255,0.1),
-    inset 0 -1px 0 rgba(0,0,0,0.15);
-  transform: translateY(-10px) rotateX(3deg) scale(1.02);
+    0 16px 40px rgba(0,0,0,0.4),
+    0 0 30px var(--accent-glow),
+    inset 0 1px 0 rgba(255,255,255,0.08);
+  transform: translateY(-4px) scale(1.01);
 }
 
 /* 3D Tilt on interactive elements */
@@ -381,15 +416,7 @@ body::after {
 .nav-item:nth-child(7) { animation-delay: 0.35s; }
 .nav-item:nth-child(8) { animation-delay: 0.4s; }
 
-/* Page transition */
-.content-area > * {
-  animation: pageEnter 0.5s cubic-bezier(0.16, 1, 0.3, 1) backwards;
-}
-
-@keyframes pageEnter {
-  from { opacity: 0; transform: translateY(20px) scale(0.98); filter: blur(4px); }
-  to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
-}
+/* Page transition — handled by module-enter/module-exit classes */
 
 /* Module Placeholder */
 .module-placeholder {
