@@ -10,6 +10,12 @@ import './css/system.css';
 import './css/settings.css';
 import './css/accent.css';
 import './css/filemanager.css';
+import './css/wordprocessor.css';
+import './css/spreadsheet.css';
+import './css/pomodoro.css';
+import './css/calculator.css';
+import './css/minibrowser.css';
+import './css/presentations.css';
 
 // ============================================================
 // BYCORE Desktop App — main.ts
@@ -20,6 +26,12 @@ import './css/filemanager.css';
 import { getCurrentWindow } from '@tauri-apps/api/window';
 import { createClient } from '@supabase/supabase-js';
 import { renderFileManager, initFileManager } from './filemanager';
+import { renderWordProcessor, initWordProcessor, cleanupWordProcessor } from './wordprocessor';
+import { renderSpreadsheet, initSpreadsheet, cleanupSpreadsheet } from './spreadsheet';
+import { renderPomodoro, initPomodoro, cleanupPomodoro } from './pomodoro';
+import { renderCalculator, initCalculator, cleanupCalculator } from './calculator';
+import { renderMiniBrowser, initMiniBrowser, cleanupMiniBrowser } from './minibrowser';
+import { renderPresentations, initPresentations, cleanupPresentations } from './presentations';
 
 const supabase = createClient(
   'https://rnltzcoexyyusvzgavjw.supabase.co',
@@ -1083,7 +1095,7 @@ function renderSystemMonitor() {
         <div class="sys-rows">
           <div class="sys-row"><span class="sys-label">Benutzer</span><span class="sys-value">${userName}</span></div>
           <div class="sys-row"><span class="sys-label">Theme</span><span class="sys-value">${theme === "dark" ? "🌙 Dark" : "☀️ Light"}</span></div>
-          <div class="sys-row"><span class="sys-label">Version</span><span class="sys-value">BYCORE v2.0.0</span></div>
+          <div class="sys-row"><span class="sys-label">Version</span><span class="sys-value">BYCORE v1.0</span></div>
           <div class="sys-row"><span class="sys-label">Backend</span><span class="sys-value">Supabase ☁️</span></div>
           <div class="sys-row"><span class="sys-label">Uptime</span><span class="sys-value" id="sysUptime">0s</span></div>
         </div>
@@ -1179,7 +1191,7 @@ function renderSettings() {
         <div class="settings-about">
           <div class="settings-about-logo">🧊</div>
           <h2>BYCORE</h2>
-          <p class="settings-version">Version 2.0.0</p>
+          <p class="settings-version">Version 1.0</p>
           <p class="settings-desc">Deine persönliche Home Base – gebaut mit Tauri & TypeScript</p>
           <p class="settings-credits">Entwickelt von Leon @ aimbit GmbH</p>
         </div>
@@ -1415,6 +1427,12 @@ const contentArea = document.getElementById("contentArea");
 
 async function loadModule(moduleName: string) {
   if (activeNoteId) saveCurrentNote();
+  cleanupWordProcessor();
+  cleanupSpreadsheet();
+  cleanupPomodoro();
+  cleanupCalculator();
+  cleanupMiniBrowser();
+  cleanupPresentations();
   clearInterval(systemInterval);
   navItems.forEach((item) => item.classList.remove("active"));
   document.querySelector(`[data-module="${moduleName}"]`)?.classList.add("active");
@@ -1440,6 +1458,12 @@ async function loadModule(moduleName: string) {
   if (moduleName === "system") setupSystemMonitor();
   if (moduleName === "settings") setupSettings();
   if (moduleName === "filemanager") { contentArea.innerHTML = renderFileManager(); initFileManager(); }
+  if (moduleName === "wordprocessor") { contentArea.innerHTML = renderWordProcessor(); initWordProcessor(); }
+  if (moduleName === "spreadsheet") { contentArea.innerHTML = renderSpreadsheet(); initSpreadsheet(); }
+  if (moduleName === "pomodoro") { contentArea.innerHTML = renderPomodoro(); initPomodoro(); }
+  if (moduleName === "calculator") { contentArea.innerHTML = renderCalculator(); initCalculator(); }
+  if (moduleName === "browser") { contentArea.innerHTML = renderMiniBrowser(); initMiniBrowser(); }
+  if (moduleName === "presentations") { contentArea.innerHTML = renderPresentations(); initPresentations(); }
 
   applyModuleAnimations();
   localStorage.setItem("bycore-active-module", moduleName);

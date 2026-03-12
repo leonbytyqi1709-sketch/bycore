@@ -1,0 +1,349 @@
+/* ============================================================
+   BYCORE — Spreadsheet Styles
+   ============================================================ */
+
+.sheet-container {
+  display: flex;
+  height: 100%;
+  gap: 0;
+  overflow: hidden;
+}
+
+/* ── Sidebar ─────────────────────────────────────────── */
+.sheet-sidebar {
+  width: 260px;
+  min-width: 260px;
+  background: var(--glass-bg);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.sheet-sidebar-header {
+  padding: 20px 16px 12px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sheet-sidebar-header h2 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.sheet-btn-new {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.sheet-btn-new:hover {
+  background: var(--accent-hover);
+  transform: translateY(-1px);
+}
+
+.sheet-doc-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px;
+}
+
+.sheet-doc-item {
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: var(--transition);
+  border: 1px solid transparent;
+  position: relative;
+  margin-bottom: 4px;
+}
+
+.sheet-doc-item:hover {
+  background: var(--bg-hover);
+  border-color: var(--border);
+}
+
+.sheet-doc-item.active {
+  background: var(--accent-subtle);
+  border-color: var(--accent);
+}
+
+.sheet-doc-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-right: 24px;
+}
+
+.sheet-doc-date {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.sheet-doc-delete {
+  position: absolute;
+  top: 10px;
+  right: 8px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 12px;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  opacity: 0;
+  transition: var(--transition);
+}
+
+.sheet-doc-item:hover .sheet-doc-delete {
+  opacity: 1;
+}
+
+.sheet-doc-delete:hover {
+  background: rgba(239, 68, 68, 0.2);
+  color: var(--danger);
+}
+
+.sheet-doc-empty {
+  padding: 20px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+/* ── Editor Area ─────────────────────────────────────── */
+.sheet-editor-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.sheet-empty-state {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.sheet-empty-state .empty-icon {
+  font-size: 48px;
+  opacity: 0.4;
+}
+
+/* ── Toolbar ─────────────────────────────────────────── */
+.sheet-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--glass-bg-strong);
+  border-bottom: 1px solid var(--border);
+  min-height: 48px;
+}
+
+.sheet-title-input {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 5px 10px;
+  border-radius: 6px;
+  width: 160px;
+  outline: none;
+  transition: var(--transition);
+  font-family: var(--font-body);
+}
+
+.sheet-title-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-glow);
+}
+
+.sheet-toolbar-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+}
+
+.sheet-cell-ref {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent);
+  min-width: 36px;
+  text-align: center;
+  font-family: var(--font-mono, monospace);
+}
+
+.sheet-formula-input {
+  flex: 1;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  font-size: 12px;
+  padding: 5px 10px;
+  border-radius: 6px;
+  outline: none;
+  font-family: var(--font-mono, monospace);
+  transition: var(--transition);
+}
+
+.sheet-formula-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-glow);
+}
+
+.sheet-toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sheet-tool-btn {
+  background: var(--bg-hover);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 4px;
+  transition: var(--transition);
+  font-family: var(--font-body);
+  white-space: nowrap;
+}
+
+.sheet-tool-btn:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+  border-color: var(--accent);
+}
+
+.sheet-tool-export {
+  background: var(--accent-subtle);
+  color: var(--accent);
+  font-weight: 600;
+  border: 1px solid var(--border-accent);
+}
+
+.sheet-tool-export:hover {
+  background: var(--accent);
+  color: #fff;
+}
+
+.sheet-autosave-status {
+  font-size: 11px;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+/* ── Grid ────────────────────────────────────────────── */
+.sheet-grid-wrapper {
+  flex: 1;
+  overflow: auto;
+  position: relative;
+}
+
+.sheet-grid {
+  border-collapse: collapse;
+  font-size: 12px;
+  font-family: var(--font-mono, monospace);
+  min-width: 100%;
+}
+
+.sheet-grid th,
+.sheet-grid td {
+  border: 1px solid var(--border);
+  padding: 0;
+}
+
+.sheet-col-header {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--glass-bg-strong);
+  color: var(--text-muted);
+  font-size: 10px;
+  font-weight: 600;
+  text-align: center;
+  padding: 4px 0;
+  min-width: 80px;
+  user-select: none;
+}
+
+.sheet-row-header {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background: var(--glass-bg-strong);
+  color: var(--text-muted);
+  font-size: 10px;
+  font-weight: 600;
+  text-align: center;
+  padding: 2px 6px;
+  min-width: 40px;
+  user-select: none;
+}
+
+/* Top-left corner */
+.sheet-grid thead th:first-child {
+  position: sticky;
+  top: 0;
+  left: 0;
+  z-index: 3;
+  background: var(--glass-bg-strong);
+}
+
+.sheet-cell {
+  min-width: 80px;
+  height: 26px;
+  padding: 2px 6px;
+  color: var(--text-primary);
+  background: transparent;
+  cursor: cell;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+  transition: background 0.1s;
+}
+
+.sheet-cell:hover {
+  background: var(--bg-hover);
+}
+
+.sheet-cell.selected {
+  outline: 2px solid var(--accent);
+  outline-offset: -1px;
+  background: var(--accent-subtle);
+}
+
+.sheet-cell[contenteditable="true"] {
+  outline: 2px solid var(--accent);
+  background: var(--bg-input);
+  white-space: pre;
+  overflow: visible;
+}

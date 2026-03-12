@@ -256,6 +256,7 @@
   transform: scale(1.1);
 }
 
+.theme-toggle {
   background: none;
   border: none;
   cursor: pointer;

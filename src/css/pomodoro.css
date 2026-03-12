@@ -1,0 +1,343 @@
+/* ============================================================
+   BYCORE — Pomodoro & Habit Tracker Styles
+   ============================================================ */
+
+.pomo-container {
+  display: flex;
+  height: 100%;
+  gap: 0;
+  overflow: hidden;
+}
+
+/* ── Timer Section ───────────────────────────────────── */
+.pomo-timer-section {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  overflow-y: auto;
+}
+
+.pomo-timer-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 32px;
+  background: var(--glass-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow);
+  max-width: 400px;
+  width: 100%;
+}
+
+.pomo-mode-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+/* ── Timer Ring ──────────────────────────────────────── */
+.pomo-timer-ring {
+  position: relative;
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+}
+
+.pomo-timer-progress {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(var(--accent) 0%, transparent 0%);
+  transition: background 0.3s;
+}
+
+.pomo-timer-inner {
+  position: absolute;
+  inset: 10px;
+  border-radius: 50%;
+  background: var(--glass-bg-strong);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pomo-time {
+  font-size: 48px;
+  font-weight: 700;
+  color: var(--text-primary);
+  font-family: var(--font-mono, monospace);
+  letter-spacing: 2px;
+}
+
+/* ── Controls ────────────────────────────────────────── */
+.pomo-controls {
+  display: flex;
+  gap: 8px;
+}
+
+.pomo-btn {
+  padding: 8px 18px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--glass-bg);
+  color: var(--text-primary);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  font-family: var(--font-body);
+}
+
+.pomo-btn:hover {
+  background: var(--bg-hover);
+  border-color: var(--accent);
+}
+
+.pomo-btn-start {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
+.pomo-btn-start:hover {
+  background: var(--accent-hover);
+}
+
+.pomo-btn-pause {
+  background: var(--accent-subtle);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+/* ── Mode Tabs ───────────────────────────────────────── */
+.pomo-mode-tabs {
+  display: flex;
+  gap: 4px;
+  background: var(--glass-bg);
+  border-radius: 8px;
+  padding: 3px;
+  border: 1px solid var(--border);
+}
+
+.pomo-mode-tab {
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+  font-family: var(--font-body);
+}
+
+.pomo-mode-tab:hover {
+  color: var(--text-primary);
+}
+
+.pomo-mode-tab.active {
+  background: var(--accent);
+  color: #fff;
+}
+
+/* ── Stats ───────────────────────────────────────────── */
+.pomo-stats {
+  display: flex;
+  gap: 32px;
+}
+
+.pomo-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.pomo-stat-value {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.pomo-stat-label {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* ── Habits Section ──────────────────────────────────── */
+.pomo-habits-section {
+  width: 340px;
+  min-width: 340px;
+  background: var(--glass-bg);
+  border-left: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.pomo-habits-header {
+  padding: 20px 16px 12px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.pomo-habits-header h2 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.pomo-btn-new {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.pomo-btn-new:hover {
+  background: var(--accent-hover);
+  transform: translateY(-1px);
+}
+
+.pomo-habits-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px;
+}
+
+.pomo-habit-empty {
+  padding: 20px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.pomo-habit-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  transition: var(--transition);
+  margin-bottom: 4px;
+  position: relative;
+}
+
+.pomo-habit-item:hover {
+  background: var(--bg-hover);
+  border-color: var(--border);
+}
+
+.pomo-habit-item.completed {
+  opacity: 0.7;
+}
+
+.pomo-habit-check {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  background: transparent;
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+  flex-shrink: 0;
+}
+
+.pomo-habit-item.completed .pomo-habit-check {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.pomo-habit-check:hover {
+  border-color: var(--accent);
+}
+
+.pomo-habit-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.pomo-habit-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pomo-habit-dots {
+  display: flex;
+  gap: 3px;
+  flex-shrink: 0;
+}
+
+.pomo-habit-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--border);
+}
+
+.pomo-habit-dot.done {
+  background: var(--accent);
+}
+
+.pomo-habit-streak {
+  font-size: 11px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  min-width: 36px;
+  text-align: right;
+}
+
+.pomo-habit-delete {
+  position: absolute;
+  top: 8px;
+  right: 6px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 11px;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  opacity: 0;
+  transition: var(--transition);
+}
+
+.pomo-habit-item:hover .pomo-habit-delete {
+  opacity: 1;
+}
+
+.pomo-habit-delete:hover {
+  background: rgba(239, 68, 68, 0.2);
+  color: var(--danger);
+}
